@@ -3,63 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Chatbot Local</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Chatbot Local</h1>
-        <div class="modes">
-            <button onclick="switchMode('normal')">Modo Normal (Gemma)</button>
-            <button onclick="switchMode('razonamiento')">Modo Razonamiento (Qwen)</button>
-            <p>Modo actual: <span id="current-mode">Normal</span></p>
-        </div>
+    <div class="main-container">
+        <h1>Heartenic Bot ♥️</h1>
         <div id="chat-box" class="chat-box"></div>
-        <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
-        <button onclick="sendMessage()">Enviar</button>
+        <div class="bottom-bar">
+            <button id="mode-toggle" class="mode-button" onclick="toggleMode()">🧠</button>
+            <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
+            <button onclick="sendMessage()">Enviar</button>
+        </div>
     </div>
 
-    <script>
-        function sendMessage() {
-            const input = document.getElementById('user-input');
-            const message = input.value.trim();
-            if (!message) return;
-
-            // Mostrar mensaje del usuario
-            const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML += `<div class="user-message">Tú: ${message}</div>`;
-            input.value = '';
-
-            // Enviar al backend
-            fetch('/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message })
-            })
-            .then(response => response.json())
-            .then(data => {
-                chatBox.innerHTML += `<div class="bot-message">Bot: ${data.response}</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            });
-        }
-
-        function switchMode(mode) {
-            fetch('/switch_mode', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mode: mode })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'ok') {
-                    document.getElementById('current-mode').textContent = data.mode.charAt(0).toUpperCase() + data.mode.slice(1);
-                }
-            });
-        }
-
-        // Enviar con Enter
-        document.getElementById('user-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendMessage();
-        });
-    </script>
+    <script src="static/index.js"></script>
 </body>
 </html>

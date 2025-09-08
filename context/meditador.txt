@@ -1,0 +1,3 @@
+el meditador es un dispositivo basado en el esp32 c6.
+tiene modo de ejercicio corto y de meditacion larga.
+busca "gamificar" la meditacion

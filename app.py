@@ -1,7 +1,11 @@
 from flask import Flask, render_template, request, jsonify, session
 import ollama
 import os
+import webview
+import threading
+import time
 
+# Configuración de Flask
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'  # Para sesiones
 
@@ -57,5 +61,34 @@ def switch_mode():
         return jsonify({'status': 'ok', 'mode': new_mode})
     return jsonify({'status': 'error'}), 400
 
+# Función para iniciar el servidor Flask en un hilo separado
+def start_server():
+    # Solo accesible localmente
+    app.run(host='127.0.0.1', port=5000, debug=False, use_reloader=False, threaded=True)
+
+# Función para crear y mostrar la ventana de la aplicación
+def create_app_window():
+    # Esperar un momento para que el servidor se inicie
+    time.sleep(2)
+    
+    # Crear la ventana de la aplicación
+    webview.create_window(
+        'Chat con IA',
+        'http://127.0.0.1:5000',
+        width=1200,
+        height=800,
+        resizable=True,
+        min_size=(800, 600)
+    )
+    
+    # Iniciar el bucle de eventos de PyWebView
+    webview.start()
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Iniciar el servidor Flask en un hilo separado
+    server_thread = threading.Thread(target=start_server)
+    server_thread.daemon = True
+    server_thread.start()
+    
+    # Crear y mostrar la ventana de la aplicación
+    create_app_window()
