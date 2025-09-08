@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, jsonify, session
-import ollama
+from flask import Flask, render_template, request, jsonify, session, Response
+from ollama import Client
 import os
 import webview
 import threading
@@ -8,6 +8,9 @@ import time
 # Configuración de Flask
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'  # Para sesiones
+
+# Cliente de Ollama
+client = Client()
 
 # Cargar contexto de la carpeta 'context'
 def load_context():
@@ -39,19 +42,40 @@ def index():
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.json.get('message')
-    mode = session.get('mode', 'normal')  # Modo por defecto: normal
+    mode = session.get('mode', 'normal')
 
-    # Seleccionar modelo basado en modo
-    model = 'gemma3:4b' if mode == 'normal' else 'qwen3:4b'
+    # Determinar si usar thinking mode y seleccionar modelo
+    use_thinking = (mode == 'razonamiento')
+    model = 'qwen3:4b' if use_thinking else 'gemma3:4b'
 
-    # Construir prompt con instrucciones, contexto y mensaje del usuario
-    prompt = f"{SYSTEM_INSTRUCTIONS}\n\nContexto adicional:\n{GLOBAL_CONTEXT}\n\nUsuario: {user_message}\nAsistente:"
+    # Mensaje del sistema unificado (sin dependencias de prompts para thinking)
+    system_content = f"{SYSTEM_INSTRUCTIONS}\nContexto que puede, o no ser útil: {GLOBAL_CONTEXT}"
 
-    # Generar respuesta con Ollama
-    response = ollama.generate(model=model, prompt=prompt)
-    bot_response = response['response']
+    # Construir mensajes para chat
+    messages = [
+        {"role": "system", "content": system_content},
+        {"role": "user", "content": user_message}
+    ]
 
-    return jsonify({'response': bot_response})
+    # Generar respuesta con Ollama chat
+    response = client.chat(
+        model=model,
+        messages=messages,
+        think=use_thinking
+    )
+
+    # Extraer contenido de la respuesta
+    bot_response = response['message']['content'].strip()
+
+    if use_thinking:
+        thinking = response['message']['thinking']
+        return jsonify({
+            'mode': 'razonamiento',
+            'thinking': thinking,
+            'response': bot_response
+        })
+    else:
+        return jsonify({'response': bot_response})
 
 @app.route('/switch_mode', methods=['POST'])
 def switch_mode():

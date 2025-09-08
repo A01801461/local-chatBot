@@ -3,16 +3,13 @@ let currentMode = 'normal';
 
 function toggleMode() {
     const modeButton = document.getElementById('mode-toggle');
-    const modeText = document.getElementById('current-mode');
     
     // Alternar entre modos
     if (currentMode === 'normal') {
         currentMode = 'razonamiento';
-        modeButton.textContent = '🧠';
         modeButton.classList.add('active');
     } else {
         currentMode = 'normal';
-        modeButton.textContent = '🧠';
         modeButton.classList.remove('active');
     }
     
@@ -44,6 +41,17 @@ function sendMessage() {
     chatBox.innerHTML += `<div class="user-message">${message}</div>`;
     input.value = '';
 
+    // Si es modo razonamiento, agregar loading de "Thinking..." con animación
+    let loadingDiv = null;
+    if (currentMode === 'razonamiento') {
+        loadingDiv = document.createElement('div');
+        loadingDiv.id = 'loading-thinking';
+        loadingDiv.className = 'bot-message loading-thinking';
+        loadingDiv.innerHTML = '<span class="thinking-dots">Thinking</span><span class="dots">...</span>';
+        chatBox.appendChild(loadingDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
     // Enviar al backend
     fetch('/chat', {
         method: 'POST',
@@ -52,9 +60,60 @@ function sendMessage() {
     })
     .then(response => response.json())
     .then(data => {
-        chatBox.innerHTML += `<div class="bot-message">${data.response}</div>`;
+        // Remover loading si existe
+        if (loadingDiv) {
+            loadingDiv.remove();
+        }
+
+        if (data.mode === 'razonamiento') {
+            // Mostrar thinking colapsable (sin animación, ya que es inmediato al llegar)
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.className = 'bot-message';
+            thinkingDiv.innerHTML = `
+                <details>
+                    <summary>finished thinking</summary>
+                    <p>${data.thinking}</p>
+                </details>
+            `;
+            chatBox.appendChild(thinkingDiv);
+            
+            // Luego, mostrar la respuesta gradualmente
+            typeResponse(data.response, chatBox);
+        } else {
+            // Modo normal: mostrar gradualmente
+            typeResponse(data.response, chatBox);
+        }
         chatBox.scrollTop = chatBox.scrollHeight;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Opcional: remover loading en caso de error y mostrar mensaje de error
+        if (loadingDiv) {
+            loadingDiv.remove();
+            chatBox.innerHTML += '<div class="bot-message error">Error al generar respuesta. Intenta de nuevo.</div>';
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
     });
+}
+
+// Función para mostrar la respuesta gradualmente (sin cambios)
+function typeResponse(text, chatBox) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'bot-message typing';
+    chatBox.appendChild(msgDiv);
+    
+    let i = 0;
+    function typeChar() {
+        if (i < text.length) {
+            msgDiv.innerHTML += text.charAt(i);
+            i++;
+            chatBox.scrollTop = chatBox.scrollHeight;
+            setTimeout(typeChar, 20); // Velocidad ajustable
+        } else {
+            msgDiv.classList.remove('typing');
+        }
+    }
+    typeChar();
 }
 
 // Enviar con Enter
