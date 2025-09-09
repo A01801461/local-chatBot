@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Chatbot Local</title>
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="static/styles/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="shortcut icon" href="static/images/logoHeartenic.png">
 </head>
 <body>
+    <a href="templates/settings.html" class="settings-btn"><i class="fas fa-gear"></i></a>
+    <a href="/" class="new-chat-btn"><i class="fas fa-pen-to-square"></i></a>
     <div class="main-container">
         <h1>Chatbot Local</h1>
         <div id="chat-box" class="chat-box"></div>
         <div class="bottom-bar">
             <button id="mode-toggle" class="mode-button" onclick="toggleMode()">🧠</button>
             <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
-            <button onclick="sendMessage()">Enviar</button>
+            <button onclick="sendMessage()"><i class="fas fa-arrow-up"></i></button>
         </div>
     </div>
 
