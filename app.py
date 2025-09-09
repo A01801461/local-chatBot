@@ -77,6 +77,10 @@ def chat():
     else:
         return jsonify({'response': bot_response})
 
+@app.route('/settings')
+def settings():
+    return render_template('settings.html', title='Settings')
+
 @app.route('/switch_mode', methods=['POST'])
 def switch_mode():
     new_mode = request.json.get('mode')

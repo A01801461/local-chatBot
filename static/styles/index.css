@@ -130,15 +130,16 @@ input[type="text"] {
 
 button {
     padding: 10px 20px;
-    background: #FF4081;
+    background: #b73957;
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 button:hover {
-    background: #F50057;
+    background: #d15471;
 }
 
 .mode-button {
@@ -149,10 +150,11 @@ button:hover {
     cursor: pointer;
     transition: all 0.3s ease;
     margin-right: 10px;
+    font-size: 1.5rem;
 }
         
 .mode-button.active {
-    background-color: #FF4081;
+    background-color: #b73957;
     color: white;
 }
 
@@ -162,7 +164,7 @@ button:hover {
 }
         
 .mode-button.active:hover {
-    background-color: #F50057;
+    background-color: #d15471;
 }
 
 .typing::after {

@@ -19,3 +19,18 @@ body {
 h1 {
     text-align: center;
 }
+
+.back-btn{
+    width: 80px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 30px;
+    color: rgb(186, 186, 186);
+}
+
+.back-btn:hover{
+    scale: 1.1;
+    color: white;
+    margin: 30px;
+}
