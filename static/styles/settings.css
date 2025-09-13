@@ -20,7 +20,7 @@ h1 {
     text-align: center;
 }
 
-.back-btn{
+.new-page-btn{
     width: 80px;
     position: fixed;
     top: 0;
@@ -29,7 +29,7 @@ h1 {
     color: rgb(186, 186, 186);
 }
 
-.back-btn:hover{
+.new-page-btn:hover{
     scale: 1.1;
     color: white;
     margin: 30px;

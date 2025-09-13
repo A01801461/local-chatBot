@@ -16,16 +16,7 @@ body {
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-.settings-btn{
-    width: 80px;
-    position: fixed;
-    top: 40px;
-    left: 0;
-    margin: 30px;
-    color: rgb(186, 186, 186);
-}
-
-.new-chat-btn{
+.new-page-btn{
     width: 80px;
     position: fixed;
     top: 0;
@@ -34,13 +25,7 @@ body {
     color: rgb(186, 186, 186);
 }
 
-.settings-btn:hover{
-    scale: 1.1;
-    color: white;
-    margin: 30px;
-}
-
-.new-chat-btn:hover{
+.new-page-btn:hover{
     scale: 1.1;
     color: white;
     margin: 30px;

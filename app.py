@@ -29,7 +29,7 @@ def load_instructions():
     if os.path.exists(instructions_file):
         with open(instructions_file, 'r', encoding='utf-8') as f:
             return f.read().strip()
-    return "Eres un asistente útil."
+    return ""
 
 # Contexto e instrucciones globales (se cargan al inicio)
 GLOBAL_CONTEXT = load_context()
@@ -49,7 +49,7 @@ def chat():
     model = 'qwen3:4b' if use_thinking else 'gemma3:4b'
 
     # Mensaje del sistema unificado (sin dependencias de prompts para thinking)
-    system_content = f"{SYSTEM_INSTRUCTIONS}\nContexto que puede, o no ser útil: {GLOBAL_CONTEXT}"
+    system_content = f"{SYSTEM_INSTRUCTIONS}"
 
     # Construir mensajes para chat
     messages = [
@@ -80,6 +80,10 @@ def chat():
 @app.route('/settings')
 def settings():
     return render_template('settings.html', title='Settings')
+
+@app.route('/heavy')
+def heavy():
+    return render_template('heavy.html', title='Heavy')
 
 @app.route('/switch_mode', methods=['POST'])
 def switch_mode():

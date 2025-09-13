@@ -1,6 +1,7 @@
 // Variable para mantener el modo actual
 let currentMode = 'normal';
 
+// funcion para cambiar el estilo css del modo del chat (razonamiento vs normal)
 function toggleMode() {
     const modeButton = document.getElementById('mode-toggle');
     
@@ -17,6 +18,7 @@ function toggleMode() {
     switchMode(currentMode);
 }
 
+// funcion para avisar al backend (python) del cambio de modo (razonamiento vs normal)
 function switchMode(mode) {
     fetch('/switch_mode', {
         method: 'POST',
@@ -31,6 +33,9 @@ function switchMode(mode) {
     });
 }
 
+// funcion para mandar mensajes:
+//   maneja los estilos como animaciones de pensamiento, etc
+//   manda el mensaje al backend (python)
 function sendMessage() {
     const input = document.getElementById('user-input');
     const message = input.value.trim();
@@ -44,12 +49,7 @@ function sendMessage() {
     // Si es modo razonamiento, agregar loading de "Thinking..." con animación
     let loadingDiv = null;
     if (currentMode === 'razonamiento') {
-        loadingDiv = document.createElement('div');
-        loadingDiv.id = 'loading-thinking';
-        loadingDiv.className = 'bot-message loading-thinking';
-        loadingDiv.innerHTML = '<span class="thinking-dots">Thinking</span><span class="dots">...</span>';
-        chatBox.appendChild(loadingDiv);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        loadingDiv = thinkingAnimation(chatBox);
     }
 
     // Enviar al backend
@@ -67,16 +67,7 @@ function sendMessage() {
 
         if (data.mode === 'razonamiento') {
             // Mostrar thinking colapsable (sin animación, ya que es inmediato al llegar)
-            const thinkingDiv = document.createElement('div');
-            thinkingDiv.className = 'bot-message';
-            thinkingDiv.innerHTML = `
-                <details>
-                    <summary>finished thinking</summary>
-                    <p>${data.thinking}</p>
-                </details>
-            `;
-            chatBox.appendChild(thinkingDiv);
-            
+            typeThoughts(data.thinking, loadingDiv, chatBox);
             // Luego, mostrar la respuesta gradualmente
             typeResponse(data.response, chatBox);
         } else {
@@ -94,6 +85,31 @@ function sendMessage() {
             chatBox.scrollTop = chatBox.scrollHeight;
         }
     });
+}
+
+// funcion para animacion de penamiento
+function thinkingAnimation(chatBox) {
+    loadingDiv = document.createElement('div');
+    loadingDiv.id = 'loading-thinking';
+    loadingDiv.className = 'bot-message loading-thinking';
+    loadingDiv.innerHTML = '<span class="thinking-dots">Thinking</span><span class="dots">...</span>';
+    chatBox.appendChild(loadingDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return loadingDiv;
+}
+
+// funcion para mostrar de penamiento finalizado
+function typeThoughts(text, loadingDiv, chatBox) {
+    // Mostrar thinking colapsable (sin animación, ya que es inmediato al llegar)
+    const thinkingDiv = document.createElement('div');
+    thinkingDiv.className = 'bot-message';
+    thinkingDiv.innerHTML = `
+        <details>
+            <summary>finished thinking</summary>
+            <p>${text}</p>
+        </details>
+    `;
+    chatBox.appendChild(thinkingDiv);
 }
 
 // Función para mostrar la respuesta gradualmente (sin cambios)
