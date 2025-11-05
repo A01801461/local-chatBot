@@ -1,38 +1,3 @@
-// Variable para mantener el modo actual
-let currentMode = 'normal';
-
-// funcion para cambiar el estilo css del modo del chat (razonamiento vs normal)
-function toggleMode() {
-    const modeButton = document.getElementById('mode-toggle');
-    
-    // Alternar entre modos
-    if (currentMode === 'normal') {
-        currentMode = 'razonamiento';
-        modeButton.classList.add('active');
-    } else {
-        currentMode = 'normal';
-        modeButton.classList.remove('active');
-    }
-    
-    // Enviar el cambio de modo al backend
-    switchMode(currentMode);
-}
-
-// funcion para avisar al backend (python) del cambio de modo (razonamiento vs normal)
-function switchMode(mode) {
-    fetch('/switch_mode', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: mode })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'ok') {
-            // El modo ya se actualizó localmente, pero puedes hacer algo adicional si es necesario
-        }
-    });
-}
-
 // funcion para mandar mensajes:
 //   maneja los estilos como animaciones de pensamiento, etc
 //   manda el mensaje al backend (python)
@@ -50,6 +15,9 @@ function sendMessage() {
     let loadingDiv = null;
     if (currentMode === 'razonamiento') {
         loadingDiv = thinkingAnimation(chatBox);
+    } else {
+        // Si no es modo razonamiento, muestra el spinner simple
+       loadingDiv = normalLoadingAnimation(chatBox);
     }
 
     // Enviar al backend
@@ -98,7 +66,7 @@ function thinkingAnimation(chatBox) {
     return loadingDiv;
 }
 
-// funcion para mostrar de penamiento finalizado
+// funcion para mostrar de pensamiento finalizado
 function typeThoughts(text, loadingDiv, chatBox) {
     // Mostrar thinking colapsable (sin animación, ya que es inmediato al llegar)
     const thinkingDiv = document.createElement('div');
@@ -130,6 +98,36 @@ function typeResponse(text, chatBox) {
         }
     }
     typeChar();
+}
+
+// Comenzar nueva conversación desde cualquier página
+function startNewConversation(event) {
+    // 1. Previene que el <a> navegue a "#"
+    event.preventDefault(); 
+    
+    // 2. Llama a switchMode para forzar el modo 'normal' en el backend
+    switchMode('normal')
+        .then(data => {
+            // 3. CUANDO EL BACKEND RESPONDE (sea con éxito o error),
+            //    ahora sí recargamos la página.
+            window.location.href = '/';
+        })
+        .catch(error => {
+            // 4. Si el fetch falla (ej. sin red), recargamos de todos modos
+            console.error('Error al resetear modo, recargando de todos modos:', error);
+            window.location.href = '/';
+        });
+}
+
+// funcion para animacion de carga normal (círculo girando)
+function normalLoadingAnimation(chatBox) {
+    let loadingDiv = document.createElement('div');
+    // Usamos 'bot-message' para la alineación y 'loading-normal' para el estilo
+    loadingDiv.className = 'bot-message loading-normal'; 
+    loadingDiv.innerHTML = '<div class="simple-spinner"></div>';
+    chatBox.appendChild(loadingDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return loadingDiv; // Devolvemos el div para poder eliminarlo después
 }
 
 // Enviar con Enter

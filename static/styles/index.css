@@ -1,40 +1,3 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #191919;
-    margin: 0;
-    padding: 20px;
-}
-
-.main-container {
-    max-width: 1000px;
-    margin: auto;
-    margin-top: 120px;
-    color: white;
-    background-color: #1e1e1e; /* Fondo general */
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.new-page-btn{
-    width: 80px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    margin: 30px;
-    color: rgb(186, 186, 186);
-}
-
-.new-page-btn:hover{
-    scale: 1.1;
-    color: white;
-    margin: 30px;
-}
-
-h1 {
-    text-align: center;
-}
-
 .modes {
     text-align: center;
     margin-bottom: 20px;
@@ -110,7 +73,8 @@ input[type="text"] {
     background-color: #1E1E1E;
     color: white;
     display: inline-block;
-    word-wrap: break-word; 
+    word-wrap: break-word;
+    font-size: 0.9rem;
 }
 
 button {
@@ -129,7 +93,7 @@ button:hover {
 
 .mode-button {
     background-color: #1E1E1E;
-    border: 2px solid #2F2F2F;
+    border: 1px solid #2F2F2F;
     padding: 8px 16px;
     border-radius: 8px;
     cursor: pointer;
@@ -211,4 +175,29 @@ details p {
 /* Opcional: Clase para error */
 .error {
     color: #721c24;
+}
+
+/*
+ * CSS para el spinner de carga normal
+ */
+.loading-normal {
+    /* Esto es para alinear el spinner dentro del div del bot */
+    display: flex;
+    align-items: center;
+    padding: 10px; /* Igual que tus otros mensajes de bot */
+}
+
+.simple-spinner {
+    width: 16px;
+    height: 16px;
+    border: 3px solid rgba(255, 255, 255, 0);
+    border-top-color: #ffffff; /* Color de la parte que gira */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }

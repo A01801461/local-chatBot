@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <title>Settings</title>
     <link rel="stylesheet" href="static/styles/settings.css">
+    <link rel="stylesheet" href="static/styles/general.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="shortcut icon" href="static/images/logoHeartenic.png">
 </head>
 <body>
     <!--Botones esquina-->
-    <a href="/" class="new-page-btn" style="top: 0;"><i class="fas fa-pen-to-square"></i></a>
-    <a href="{{ url_for('heavy') }}" class="new-page-btn" style="top: 40px;"><i class="fas fa-atom"></i></a>
-    <a href="{{ url_for('settings') }}" class="new-page-btn"style="top: 80px;"><i class="fas fa-gear"></i></a>
+    <a href="#" onclick="startNewConversation(event)" class="new-page-btn" style="top: 0;"><i class="fas fa-pen-to-square"></i></a>
+    <a href="{{ url_for('settings') }}" class="new-page-btn"style="top: 50px;"><i class="fas fa-gear"></i></a>
     <!------------------->
     <div class="main-container">
         <h1>Settings</h1>
@@ -19,6 +19,8 @@
         </div>
     </div>
 
-    <script src="static/scripts/heavy.js"></script>
+    <script src="static/scripts/modes.js"></script>
+    <script src="static/scripts/settings.js"></script>
+
 </body>
 </html>

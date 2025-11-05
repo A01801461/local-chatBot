@@ -5,6 +5,10 @@ import webview
 import threading
 import time
 
+# models to use
+thinking_model = 'qwen3:4b'
+not_thinking_model = 'gemma3:4b'
+
 # Configuración de Flask
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'  # Para sesiones
@@ -46,7 +50,7 @@ def chat():
 
     # Determinar si usar thinking mode y seleccionar modelo
     use_thinking = (mode == 'razonamiento')
-    model = 'qwen3:4b' if use_thinking else 'gemma3:4b'
+    model = thinking_model if use_thinking else not_thinking_model
 
     # Mensaje del sistema unificado (sin dependencias de prompts para thinking)
     system_content = f"{SYSTEM_INSTRUCTIONS}"
@@ -80,10 +84,6 @@ def chat():
 @app.route('/settings')
 def settings():
     return render_template('settings.html', title='Settings')
-
-@app.route('/heavy')
-def heavy():
-    return render_template('heavy.html', title='Heavy')
 
 @app.route('/switch_mode', methods=['POST'])
 def switch_mode():
