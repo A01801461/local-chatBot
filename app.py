@@ -4,6 +4,13 @@ import os
 import webview
 import threading
 import time
+import psutil
+try:
+    from pynvml import *
+    import pynvml
+    NVIDIA_SMI_LOADED = True
+except ImportError:
+    NVIDIA_SMI_LOADED = False
 
 # models to use
 thinking_model = 'qwen3:4b'
@@ -15,6 +22,28 @@ app.secret_key = 'super_secret_key'  # Para sesiones
 
 # Cliente de Ollama
 client = Client()
+
+def evaluate_performance(specs):
+    """Analiza las especificaciones y devuelve un mensaje de rendimiento."""
+    if specs['gpu_type'] == 'nvidia':
+        vram = specs['vram_gb']
+        if vram > 10:
+            return {'text': 'Excelent Performance.', 'level': 'good', 'details': 'Ideal bigger models (12B+ parameters).'}
+        elif vram > 6:
+            return {'text': 'Good Performance.', 'level': 'good', 'details': 'Perfect for models with 7B parameters.'}
+        elif vram > 3:
+            return {'text': 'Basic Performance.', 'level': 'ok', 'details': 'Enough for small models (3B-4B parameters).'}
+        else:
+            return {'text': 'Limited Performance.', 'level': 'slow', 'details': 'low VRAM, expect poor performance.'}
+    else:
+        # Análisis basado en CPU/RAM
+        ram = specs['ram_gb']
+        if ram > 15:
+            return {'text': 'Basic Performance.', 'level': 'slow', 'details': 'The models wil run on CPU. it will be slow.'}
+        elif ram > 7:
+            return {'text': 'Limited Performance.', 'level': 'bad', 'details': 'Low RAM for LLMs. Expect poor performance.'}
+        else:
+            return {'text': 'Not Recomended.', 'level': 'bad', 'details': 'insuficient RAM. the app might fail.'}
 
 # Cargar contexto de la carpeta 'context'
 def load_context():
@@ -42,6 +71,68 @@ SYSTEM_INSTRUCTIONS = load_instructions()
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/api/system_check')
+def system_check():
+    """Ruta de API para diagnosticar el hardware (con mejor manejo de errores)."""
+    specs = {}
+    gpu_error_message = None  # NUEVO: Variable para guardar el error
+
+    try:
+        if not NVIDIA_SMI_LOADED:
+            # Error específico de importación
+            raise ImportError("La biblioteca 'pynvml' no está instalada. Ejecuta: pip install pynvml")
+
+        pynvml.nvmlInit()
+        handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+        info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+
+        gpu_name_raw = pynvml.nvmlDeviceGetName(handle)
+        
+        # Comprobamos si es bytes (para versiones antiguas) o str (para versiones nuevas)
+        if isinstance(gpu_name_raw, bytes):
+            gpu_name = gpu_name_raw.decode('utf-8')
+        else:
+            gpu_name = gpu_name_raw
+        
+        specs = {
+            'gpu_type': 'nvidia',
+            'gpu_name': gpu_name,
+            'vram_gb': round(info.total / (1024**3), 2)
+        }
+        pynvml.nvmlShutdown()
+
+    except ImportError as e:
+        # Captura el error de 'pip install pynvml'
+        gpu_error_message = str(e)
+    
+    except pynvml.NVMLError as e:
+        # Captura errores específicos del driver (ej. 'Driver not loaded')
+        gpu_error_message = f"Error del driver NVIDIA: {str(e)}"
+    
+    except Exception as e:
+        # Captura cualquier otro error inesperado
+        gpu_error_message = f"Error de GPU inesperado: {str(e)}"
+
+    
+    # --- Fallback a CPU/RAM ---
+    # Si el diccionario 'specs' sigue vacío, es que el 'try' falló
+    if 'gpu_type' not in specs:
+        ram_info = psutil.virtual_memory()
+        specs = {
+            'gpu_type': 'none',
+            'ram_gb': round(ram_info.total / (1024**3), 2),
+            'cpu_cores': psutil.cpu_count(logical=False)
+        }
+
+    performance = evaluate_performance(specs)
+    
+    # ¡Devolvemos el error en el JSON!
+    return jsonify({
+        'specs': specs,
+        'performance': performance,
+        'gpu_error': gpu_error_message  # NUEVO: Pasamos el error al frontend
+    })
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -92,6 +183,35 @@ def switch_mode():
         session['mode'] = new_mode
         return jsonify({'status': 'ok', 'mode': new_mode})
     return jsonify({'status': 'error'}), 400
+
+# Ruta para OBTENER las instrucciones
+@app.route('/api/instructions', methods=['GET'])
+def get_instructions():
+    # Usamos la variable global que ya se cargó al inicio
+    return jsonify({'instructions': SYSTEM_INSTRUCTIONS})
+
+# Ruta para GUARDAR las instrucciones
+@app.route('/api/instructions', methods=['POST'])
+def save_instructions():
+    global SYSTEM_INSTRUCTIONS # Necesitamos modificar la variable global
+
+    data = request.json
+    instructions_text = data.get('instructions')
+
+    if instructions_text is None:
+        return jsonify({'status': 'error', 'message': 'No instructions provided'}), 400
+
+    try:
+        # 1. Guardar en el archivo (para persistencia)
+        with open('instructions.txt', 'w', encoding='utf-8') as f:
+            f.write(instructions_text)
+
+        # 2. Actualizar la variable global en memoria
+        SYSTEM_INSTRUCTIONS = instructions_text
+
+        return jsonify({'status': 'ok'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 # Función para iniciar el servidor Flask en un hilo separado
 def start_server():

@@ -16,6 +16,50 @@
     <div class="main-container">
         <h1>Settings</h1>
         <div class="settings-box">
+            <div class="division"></div>
+            <div class="settings-item">
+                <h3>AI Models</h3>
+                <p>State of the art small models from Qwen and Google.</p>
+                <div class="models">
+                    <div class="model-container"><strong class="model-name">Gemma3 : 4b</strong></div>
+                    <div class="model-container"><strong class="model-name">🧠 Qwen3 : 4b</strong></div>
+                </div>
+            </div>
+            <div class="division"></div>
+            <div class="settings-item">
+                <h3>System Diagnosis</h3>
+                <p>Hardware evaluation to determine expected performance.</p>
+                <ul class="spec-list">
+                    <li class="spec-title"><strong>Hardware</strong></li>
+                    <li>
+                        <strong>GPU:</strong>
+                        <span id="spec-gpu">Checking...</span>
+                    </li>
+                    
+                    <li id="li-vram" style="display: none;">
+                        <strong>VRAM:</strong>
+                        <span id="spec-vram"></span>
+                    </li>
+                    
+                    <li id="li-ram" style="display: none;">
+                        <strong>RAM:</strong>
+                        <span id="spec-ram"></span>
+                    </li>
+                </ul>
+                
+                <div id="performance-result" class="status-box loading">
+                    <span id="performance-text">Analyzing...</span>
+                    <small id="performance-details"></small>
+                </div>
+            </div>
+            <div class="division"></div>
+            <div class="settings-item">
+                <h3>System Prompt</h3>
+                <p>Define the assistant's basic personality and behavior.</p>
+                <textarea id="system-prompt-editor" rows="10"></textarea>
+                <button id="save-prompt-btn" class="save-button">Save</button>
+                <span id="save-prompt-status"></span>
+            </div>            
         </div>
     </div>
 

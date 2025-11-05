@@ -1,0 +1,200 @@
+.settings-box{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-box > * {
+    width: 100%;
+}
+
+.settings-item{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.settings-item h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: #eee;
+}
+
+.settings-item p {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    color: #999;
+}
+
+textarea#system-prompt-editor {
+    width: 80%;
+    background-color: #2e2e2e;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    margin: 15px;
+    resize: vertical;
+}
+
+button#save-prompt-btn {
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #b73957;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.division {
+    border: 0;
+    height: 1px;
+    background-color: #cccccc8a; /* Color gris claro */
+    width: 80%;          /* Ancho del separador */
+    margin: 40px 0; /* Espacio arriba y abajo */
+}
+
+/* ------------------------- */
+/* Modelos de IA */
+/* Contenedor flex para las tarjetas de modelo */
+.models {
+    display: flex;
+    flex-wrap: wrap; /* Para que se ajusten en pantallas pequeñas */
+    gap: 15px;      /* Espacio entre las tarjetas */
+    margin-top: 20px; /* Un poco de espacio extra */
+}
+
+/* Tarjeta individual para cada modelo */
+.model-container {
+    flex: 1; /* Permite que las tarjetas crezcan y ocupen el espacio */
+    min-width: 200px; /* Un ancho mínimo antes de envolver */
+    
+    background-color: #2a2a2e; /* Fondo oscuro consistente */
+    border: 1px solid #3a3a40; /* Borde sutil */
+    border-radius: 10px;     /* Esquinas redondeadas */
+    padding: 10px 20px;
+    
+    text-align: center;
+    
+    /* Transición suave para el efecto hover */
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efecto hover para interactividad */
+.model-container:hover {
+    transform: translateY(-3px); /* Eleva la tarjeta */
+    border-color: #5a5a60;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra suave */
+}
+
+/* Estilo para el nombre del modelo dentro de la tarjeta */
+.model-name {
+    margin: 0; /* Quitar margen por defecto de <p> */
+    color: #f0f0f0;
+    font-size: 1.1em;
+    font-weight: 600;
+    white-space: nowrap; /* Evita que el nombre se parta */
+    padding-top: 15px;
+}
+
+/* ------------------------- */
+
+/* Lista de especificaciones */
+.spec-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 15px;
+    background-color: #2a2a2e;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.spec-list li {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #3a3a40;
+}
+
+.spec-list li:last-child {
+    border-bottom: none;
+}
+
+.spec-list li strong {
+    color: #bbb;
+    margin-right: 10px;
+}
+
+.spec-list li span {
+    color: #fff;
+    font-weight: bold;
+    text-align: right;
+}
+
+.spec-title {
+    font-size: 1.4em;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Caja de resultado de rendimiento */
+.status-box {
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.status-box #performance-text {
+    font-size: 1.1em;
+    font-weight: bold;
+    display: block; /* Para que ocupe su propia línea */
+}
+
+.status-box #performance-details {
+    font-size: 0.9em;
+    color: #eee;
+    margin-top: 5px;
+    display: block;
+}
+
+/* Niveles de rendimiento */
+.status-box.loading {
+    background-color: #333;
+    border-color: #555;
+    color: #ccc;
+}
+
+.status-box.good {
+    background-color: #1a4a1a; /* Verde oscuro */
+    border-color: #2a7a2a;
+    color: #b3ffb3;
+}
+
+.status-box.ok {
+    background-color: #4a4a1a; /* Amarillo/naranja oscuro */
+    border-color: #7a7a2a;
+    color: #ffffb3;
+}
+
+.status-box.slow {
+    background-color: #4a331a; /* Naranja/marrón oscuro */
+    border-color: #7a522a;
+    color: #ffccb3;
+}
+
+.status-box.bad {
+    background-color: #4a1a1a; /* Rojo oscuro */
+    border-color: #7a2a2a;
+    color: #ffb3b3;
+}

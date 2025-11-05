@@ -18,7 +18,7 @@
 }
 
 .chat-box {
-    height: 300px;
+    flex-grow: 1; /* Ocupa todo el espacio disponible */
     overflow-y: auto;
     padding: 10px;
     margin-bottom: 10px;
@@ -28,6 +28,7 @@
     font-family: Arial, sans-serif;
     background-color: #1e1e1e; /* Fondo general */
     color: #f0f0f0;
+    box-sizing: border-box;
 }
 
 .bottom-bar{
@@ -37,6 +38,7 @@
     border-radius: 16px;
     padding: 10px 16px;
     overflow-y: auto;
+    box-sizing: border-box;
 }
 
 /* Mensaje del usuario */
